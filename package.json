@@ -1,6 +1,6 @@
 {
   "name": "3dtiles-tool",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "",
   "main": "dist/bundle.js",
   "scripts": {
@@ -22,5 +22,9 @@
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.14.2",
     "@rollup/plugin-babel": "^5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TNMoOn/3dtiles-tool"
   }
 }
