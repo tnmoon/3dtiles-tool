@@ -33,7 +33,6 @@ export class TileNode {
     return this
   }
 
-  // 改为setter方法
   setBoundingBox(boundingBox) {
     const center = boundingBox.getCenter(new THREE.Vector3())
     const size = boundingBox.getSize(new THREE.Vector3())
@@ -45,7 +44,6 @@ export class TileNode {
     ]
   }
 
-  // 改为setter方法
   getBoundingBox() {
     const box = this.boundingVolume.box
     if (!box) return null
@@ -55,7 +53,6 @@ export class TileNode {
     )
   }
 
-  // 改为setter方法
   setBoundingRegion(boundingRegion) {
     this.boundingVolume.region = [
       boundingRegion.min.x * (Math.PI / 180),
@@ -67,20 +64,11 @@ export class TileNode {
     ]
   }
 
-  // 改为setter方法
   setTransform(matrix4) {
     this.transform = matrix4.toArray()
   }
 
-  // 改为setter方法
   setExtras(extras) {
     this.extras = extras
-  }
-
-  static newDefaultRoot({ boundingBox, children, transform } = {}) {
-    return new TileNode().setFiled({
-      // boundingBox, geometricError: 20000, children, transform: defaultTransform
-      boundingBox, geometricError: 100000, children, transform
-    })
   }
 }

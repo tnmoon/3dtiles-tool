@@ -36,9 +36,9 @@ export function sumArray(array) {
 }
 
 const exporter = new GLTFExporter()
-export function exportGlbBufferFromTHREE(blockMeshGroup) {
+export function exportGltfFromTHREE(input, option) {
   return new Promise(resolve => {
-    exporter.parse(blockMeshGroup, gltf => resolve(gltf), { binary: true })
+    exporter.parse(input, gltf => resolve(gltf), option)
   })
 }
 

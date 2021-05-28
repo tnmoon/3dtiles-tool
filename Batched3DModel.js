@@ -1,35 +1,27 @@
 import { BatchTableMap } from "./BatchTableMap"
-import { FeatureTableMap } from "./FeatureTableMap"
+import { FeatureTableMap, B3DM_GLOBAL_PROPERTY } from "./FeatureTableMap"
 import { copyUint8ToDataViewInOrder, copyUint32ToDataViewInOrder } from "./utils"
 
 export class Batched3DModel {
   name = null
-  _glbBuffer = null
+  _gltf = null
   _batchLength = null
   _batchTableMap = null
   _featureTableMap = null
 
-  constructor(name, batchTableMap, featureTableMap, glbBuffer) {
+  constructor(name, batchTableMap, featureTableMap, gltf) {
     if (name) this.name = name
     if (batchTableMap) this.batchTableMap = batchTableMap
     if (featureTableMap) this.featureTableMap = featureTableMap
-    if (glbBuffer) this.glbBuffer = glbBuffer
+    if (gltf) this.gltf = gltf
   }
 
-  set glbBuffer(value) {
-    this._glbBuffer = value
-
-    const jsonChunkLength = new DataView(value.slice(12, 16)).getUint32(0, true)
-    const jsonChunkBuffer = value.slice(20, 20 + jsonChunkLength)
-    const glbHeader = JSON.parse(new TextDecoder("utf-8").decode(new Uint8Array(jsonChunkBuffer)))
-    const batchIdIndexArray = glbHeader?.meshes?.flatMap(({ primitives }) => primitives.map(p => p.attributes._BATCHID)).filter(i => typeof (i) === "number")
-
-    if (!batchIdIndexArray || batchIdIndexArray.length === 0) this.batchLength = 0
-    else this.batchLength = Math.max(...batchIdIndexArray.map(index => glbHeader.accessors[index].max[0])) + 1
+  set gltf(value) {
+    this._gltf = value
   }
 
-  get glbBuffer() {
-    return this._glbBuffer
+  get gltf() {
+    return this._gltf
   }
 
   set batchTableMap(value) {
@@ -53,17 +45,28 @@ export class Batched3DModel {
   }
 
   get batchLength() {
-    return this._batchLength
+    if (this.featureTableMap && this.featureTableMap.has(B3DM_GLOBAL_PROPERTY.BATCH_LENGTH)) {
+      return this.featureTableMap.get(B3DM_GLOBAL_PROPERTY.BATCH_LENGTH)
+    } else if (this.batchTableMap && typeof (this.batchTableMap.batchLength) === "number") {
+      return this.batchTableMap.batchLength
+    } else if (this.gltf) {
+      return this.gltf.batchLength
+    } else {
+      return null
+    }
   }
 
   export() {
-    if (!this.glbBuffer) throw new Error("no glb buffer")
+    if (!this.gltf) throw new Error("no gltf")
     if (!this.featureTableMap) this.featureTableMap = new FeatureTableMap()
     if (!this.batchTableMap) this.batchTableMap = new BatchTableMap()
 
-    // TODO: batch_length有三处可被设置，分别是glb推导、batchTableMap设置、featureTableMap设置BATCH_LENGTH，优先级依次降低
-    this.featureTableMap.set("BATCH_LENGTH", this.batchLength)
-    this.batchTableMap.batchLength = this.batchLength
+    if (!this.featureTableMap.has(B3DM_GLOBAL_PROPERTY.BATCH_LENGTH)) {
+      this.featureTableMap.set(B3DM_GLOBAL_PROPERTY.BATCH_LENGTH, this.batchLength)
+    }
+    if (typeof (this.batchTableMap.batchLength) !== "number") {
+      this.batchTableMap.batchLength = this.batchLength
+    }
 
     const {
       tableJSONIterator: featureTableJSONIterator,
@@ -79,12 +82,14 @@ export class Batched3DModel {
       tableBinaryByteLength: batchTableBinaryByteLength,
     } = this.batchTableMap.export()
 
+    const glbBuffer = this.gltf.export()
+
     const b3dmTotalByteLength = 28 +
       featureTableJSONByteLength +
       featureTableBinaryByteLength +
       batchTableJSONByteLength +
       batchTableBinaryByteLength +
-      this.glbBuffer.byteLength
+      glbBuffer.byteLength
 
     const b3dmBuffer = new ArrayBuffer(b3dmTotalByteLength)
     const b3dmDataView = new DataView(b3dmBuffer)
@@ -109,7 +114,7 @@ export class Batched3DModel {
     copyUint8ToDataViewInOrder(b3dmDataView, batchTableBinaryIterator)
 
     // 拷贝glb
-    copyUint8ToDataViewInOrder(b3dmDataView, new Uint8Array(this.glbBuffer))
+    copyUint8ToDataViewInOrder(b3dmDataView, new Uint8Array(glbBuffer))
 
     return b3dmBuffer
   }

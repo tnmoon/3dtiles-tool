@@ -3,7 +3,7 @@
 
 #### 3DTiles Generate Tool ####
 
-3DTiles规范包括了诸如GLTF、B3DM、PNTS、JSON等多种类型的文件，本工具库主要是为生成及组装这些文件提供便利。当前，仅支持从Three.js对象导出GLB及生成B3DM文件两大功能，后续还将不断完善。
+3DTiles规范包括了诸如GLTF、B3DM、PNTS、JSON等多种类型的文件，本工具库主要是为生成、组装及处理这些文件提供便利。当前，仅支持从Three.js对象导出GLB及生成B3DM文件两大功能，后续还将不断完善。
 
 ### Usage ###
 
