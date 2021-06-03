@@ -43,23 +43,14 @@ export function exportGltfFromTHREE(input, option) {
 }
 
 const targetIndexMap = new WeakMap() // 使用WeakMap以避免内存泄漏
-
-export function copyUint32ToDataViewInOrder(dataView, source, littleEndian) {
-  let index = targetIndexMap.get(dataView) || 0
+// 遇到ArrayBuffer时，以小端模式拷贝
+export function copyInOrder(target, source) {
+  let index = targetIndexMap.get(target) || 0
   for (const value of source) {
-    dataView.setUint32((index += 4) - 4, value, littleEndian)
+    target[index++] = value
   }
-  if (index < dataView.byteLength) targetIndexMap.set(dataView, index)
-  else targetIndexMap.delete(dataView)
-}
-
-export function copyUint8ToDataViewInOrder(dataView, source) {
-  let index = targetIndexMap.get(dataView) || 0
-  for (const value of source) {
-    dataView.setUint8(index++, value)
-  }
-  if (index < dataView.byteLength) targetIndexMap.set(dataView, index)
-  else targetIndexMap.delete(dataView)
+  if (index < target.length) targetIndexMap.set(target, index)
+  else targetIndexMap.delete(target)
 }
 
 export function stringCharCodeIterator(string) {
@@ -70,4 +61,9 @@ export function stringCharCodeIterator(string) {
       }
     }
   }
+}
+
+export function defaultValue(a, b) {
+  if (a !== undefined && a !== null) return a
+  else return b
 }

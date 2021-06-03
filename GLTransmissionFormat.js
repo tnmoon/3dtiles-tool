@@ -6,6 +6,7 @@ export class GLTransmissionFormat {
 
   async fromTHREE(input) {
     this.glbBuffer = await exportGltfFromTHREE(input, { binary: true })
+    return this
   }
 
   get batchLength() {

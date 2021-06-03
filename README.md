@@ -9,7 +9,7 @@
 
 1.首先，根据Three.js对象生成GLB文件，其中batchId数组需要依据业务需求填充相应值，具体请参考3DTiles规范文档。
 ```javascript
-import { exportGlbBufferFromTHREE } from "3dtiles-tool"
+import { GLTransmissionFormat } from "3dtiles-tool"
 import * as THREE from "three"
 
 const blockFaceAttribute = {
@@ -30,7 +30,7 @@ const blockFaceMesh = new THREE.Mesh(blockFaceGeometry, new THREE.MeshPhongMater
   flatShading: true,
 }))
 
-const glbBuffer = await exportGlbBufferFromTHREE(blockFaceMesh)
+const gltf = await new GLTransmissionFormat().fromTHREE(blockFaceMesh)
 ```
 
 2.接着，根据业务需求制作batchTable和featureTable对象。若业务上对此无需求，也可不构造相应的table对象，并在下一步中省略为b3dm对象赋该值。当为batchTable对象添加属性时，它将根据batchLength值和传入的typedArray类型及长度自动生成对应的JSON Header。当为featureTable对象添加属性时，属性的key值必须为3DTiles规范内合法的key值，这将由常量B3DM_GLOBAL_PROPERTY所记载，超出该常量范围的key值将导致报错。另外，BATCH_LENGTH这种特殊的featureTable属性可由Batched3DModel对象根据GLB推导得出，可省略设置。
@@ -51,7 +51,7 @@ featureTableMap.set(B3DM_GLOBAL_PROPERTY.RTC_CENTER, new Float32Array([1, 2, 3])
 import { Batched3DModel } from "3dtiles-tool"
 
 const b3dm = new Batched3DModel()
-b3dm.glbBuffer = glbBuffer
+b3dm.gltf = gltf
 b3dm.batchTableMap = batchTableMap
 b3dm.featureTableMap = featureTableMap
 

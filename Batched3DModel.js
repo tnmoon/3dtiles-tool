@@ -1,6 +1,6 @@
 import { BatchTableMap } from "./BatchTableMap"
 import { FeatureTableMap, B3DM_GLOBAL_PROPERTY } from "./FeatureTableMap"
-import { copyUint8ToDataViewInOrder, copyUint32ToDataViewInOrder } from "./utils"
+import { copyInOrder } from "./utils"
 
 export class Batched3DModel {
   name = null
@@ -92,29 +92,29 @@ export class Batched3DModel {
       glbBuffer.byteLength
 
     const b3dmBuffer = new ArrayBuffer(b3dmTotalByteLength)
-    const b3dmDataView = new DataView(b3dmBuffer)
+    const b3dmUint32Buffer = new Uint32Array(b3dmBuffer)
 
     // 设置文件类型为b3dm、版本号为1、文件总长度
-    copyUint32ToDataViewInOrder(b3dmDataView, [0x6233646d], false)
-    copyUint32ToDataViewInOrder(b3dmDataView, [1], true)
-    copyUint32ToDataViewInOrder(b3dmDataView, [b3dmTotalByteLength], true)
+    copyInOrder(b3dmUint32Buffer, [0x6d643362])
+    copyInOrder(b3dmUint32Buffer, [1])
+    copyInOrder(b3dmUint32Buffer, [b3dmTotalByteLength])
 
     // 分别设置featureTable和batchTable的json和binary的长度
-    copyUint32ToDataViewInOrder(b3dmDataView, [featureTableJSONByteLength], true)
-    copyUint32ToDataViewInOrder(b3dmDataView, [featureTableBinaryByteLength], true)
-    copyUint32ToDataViewInOrder(b3dmDataView, [batchTableJSONByteLength], true)
-    copyUint32ToDataViewInOrder(b3dmDataView, [batchTableBinaryByteLength], true)
+    copyInOrder(b3dmUint32Buffer, [featureTableJSONByteLength])
+    copyInOrder(b3dmUint32Buffer, [featureTableBinaryByteLength])
+    copyInOrder(b3dmUint32Buffer, [batchTableJSONByteLength])
+    copyInOrder(b3dmUint32Buffer, [batchTableBinaryByteLength])
 
     // 拷贝featureTable
-    copyUint8ToDataViewInOrder(b3dmDataView, featureTableJSONIterator)
-    copyUint8ToDataViewInOrder(b3dmDataView, featureTableBinaryIterator)
+    copyInOrder(b3dmUint32Buffer, featureTableJSONIterator)
+    copyInOrder(b3dmUint32Buffer, featureTableBinaryIterator)
 
     // 拷贝batchTable
-    copyUint8ToDataViewInOrder(b3dmDataView, batchTableJSONIterator)
-    copyUint8ToDataViewInOrder(b3dmDataView, batchTableBinaryIterator)
+    copyInOrder(b3dmUint32Buffer, batchTableJSONIterator)
+    copyInOrder(b3dmUint32Buffer, batchTableBinaryIterator)
 
     // 拷贝glb
-    copyUint8ToDataViewInOrder(b3dmDataView, new Uint8Array(glbBuffer))
+    copyInOrder(b3dmUint32Buffer, new Uint32Array(glbBuffer))
 
     return b3dmBuffer
   }
