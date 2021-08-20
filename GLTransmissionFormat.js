@@ -5,7 +5,7 @@ export class GLTransmissionFormat {
   // glbBuffer = null
   threeObject = null
 
-  async fromTHREE(input) {
+  fromTHREE(input) {
     this.threeObject = input
     // this.glbBuffer = await exportGltfFromTHREE(input, { binary: true })
     return this
