@@ -58,7 +58,7 @@ b3dm.featureTableMap = featureTableMap
 const b3dmBuffer = await b3dm.export()
 ```
 
-3.1如果需要单独导出glTF或binarg glTF文件，也可通过调用gltf的export()方法实现，可以向该方法中传入options对象，其参数设置请参考three.js的[GLTFExporter](https://threejs.org/docs/index.html?q=export#examples/en/exporters/GLTFExporter)对象的使用说明。
+3.1如果需要单独导出glTF或binary glTF文件，也可通过调用gltf的export()方法实现，可以向该方法中传入options对象，其参数设置请参考three.js的[GLTFExporter](https://threejs.org/docs/index.html?q=export#examples/en/exporters/GLTFExporter)对象的使用说明。
 ```javascript
 const options = {
   binary: true, // 导出glb
