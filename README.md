@@ -30,7 +30,7 @@ const blockFaceMesh = new THREE.Mesh(blockFaceGeometry, new THREE.MeshPhongMater
   flatShading: true,
 }))
 
-const gltf = await new GLTransmissionFormat().fromTHREE(blockFaceMesh)
+const gltf = new GLTransmissionFormat().fromTHREE(blockFaceMesh)
 ```
 
 2.接着，根据业务需求制作batchTable和featureTable对象。若业务上对此无需求，也可不构造相应的table对象，并在下一步中省略为b3dm对象赋该值。当为batchTable对象添加属性时，它将根据batchLength值和传入的typedArray类型及长度自动生成对应的JSON Header。当为featureTable对象添加属性时，属性的key值必须为3DTiles规范内合法的key值，这将由常量B3DM_GLOBAL_PROPERTY所记载，超出该常量范围的key值将导致报错。另外，BATCH_LENGTH这种特殊的featureTable属性可由Batched3DModel对象根据GLB推导得出，可省略设置。
@@ -55,7 +55,16 @@ b3dm.gltf = gltf
 b3dm.batchTableMap = batchTableMap
 b3dm.featureTableMap = featureTableMap
 
-const buffer = b3dm.export()
+const b3dmBuffer = await b3dm.export()
+```
+
+3.1如果需要单独导出glTF或binarg glTF文件，也可通过调用gltf的export()方法实现，可以向该方法中传入options对象，其参数设置请参考three.js的[GLTFExporter](https://threejs.org/docs/index.html?q=export#examples/en/exporters/GLTFExporter)对象的使用说明。
+```javascript
+const options = {
+  binary: true, // 导出glb
+  animations: animations,  // 导出动画
+}
+const glbBuffer = await gltf.export(options)
 ```
 
 [npm-url]: https://www.npmjs.com/package/3dtiles-tool

@@ -19,7 +19,7 @@ function getPropertyType(property, batchLength) {
   else if (property.length === 2 * batchLength) return "VEC2"
   else if (property.length === 3 * batchLength) return "VEC3"
   else if (property.length === 4 * batchLength) return "VEC4"
-  else throw new Error("batchTable property length error")
+  else throw new Error(`batchTable property length error, property length is ${property.length}, batchLength is ${batchLength}`)
 }
 
 export class BatchTableMap extends TableMap {
