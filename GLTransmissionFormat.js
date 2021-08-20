@@ -23,20 +23,24 @@ export class GLTransmissionFormat {
 
     if (!this.threeObject) return null
 
-    let batchLength = 0
+    let maxBatchId = 0
     const stack = [this.threeObject]
     while (stack.length > 0) {
       const node = stack.pop()
       if (node.isMesh || node.isLine || node.isPoints) {
         const batchIdArray = node.geometry.attributes.batchId?.array
-        if (batchIdArray) batchLength = Math.max(batchLength, ...batchIdArray)
+        if (batchIdArray) {
+          for (const batchId of batchIdArray) {
+            maxBatchId = Math.max(maxBatchId, batchId)
+          }
+        }
       }
       if (node.children.length > 0) {
         stack.push(...node.children)
       }
     }
 
-    return batchLength + 1
+    return maxBatchId + 1
   }
 
   async export(options = {}) {
