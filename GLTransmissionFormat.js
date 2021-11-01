@@ -35,7 +35,7 @@ export class GLTransmissionFormat {
           }
         }
       }
-      if (node.children.length > 0) {
+      if (node.children && node.children.length > 0) {
         stack.push(...node.children)
       }
     }

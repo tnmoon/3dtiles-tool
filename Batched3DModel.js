@@ -84,12 +84,12 @@ export class Batched3DModel {
 
     const glbBuffer = await this.gltf.export({ binary: true })
 
-    const b3dmTotalByteLength = 28 +
+    const b3dmTotalByteLength = Math.ceil((28 +
       featureTableJSONByteLength +
       featureTableBinaryByteLength +
       batchTableJSONByteLength +
       batchTableBinaryByteLength +
-      glbBuffer.byteLength
+      glbBuffer.byteLength) / 4) * 4
 
     const b3dmBuffer = new ArrayBuffer(b3dmTotalByteLength)
     const b3dmUint32Buffer = new Uint32Array(b3dmBuffer)
