@@ -72,11 +72,11 @@ GLTFExporter.prototype = {
 	parse: function (input, onDone, options) {
 
 		var DEFAULT_OPTIONS = {
-			binary: false,
+			binary: true,
 			trs: false,
 			onlyVisible: true,
 			truncateDrawRange: true,
-			embedImages: true,
+			embedImages: false,
 			maxTextureSize: Infinity,
 			animations: [],
 			includeCustomExtensions: false
@@ -2069,7 +2069,7 @@ GLTFExporter.prototype = {
 				var jsonChunkPrefix = new DataView(new ArrayBuffer(GLB_CHUNK_PREFIX_BYTES));
 				jsonChunkPrefix.setUint32(0, jsonChunk.byteLength, true);
 				jsonChunkPrefix.setUint32(4, GLB_CHUNK_TYPE_JSON, true);
-
+				
 				// GLB header.
 				var header = new ArrayBuffer(GLB_HEADER_BYTES);
 				var headerView = new DataView(header);

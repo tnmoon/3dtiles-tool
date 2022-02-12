@@ -56,7 +56,7 @@ export class Batched3DModel {
     }
   }
 
-  async export() {
+  async export(options) {
     if (!this.gltf) throw new Error("no gltf")
     if (!this.featureTableMap) this.featureTableMap = new FeatureTableMap()
     if (!this.batchTableMap) this.batchTableMap = new BatchTableMap()
@@ -82,7 +82,7 @@ export class Batched3DModel {
       tableBinaryByteLength: batchTableBinaryByteLength,
     } = this.batchTableMap.export()
 
-    const glbBuffer = await this.gltf.export({ binary: true })
+    const glbBuffer = await this.gltf.export(options)
 
     const b3dmTotalByteLength = Math.ceil((28 +
       featureTableJSONByteLength +
