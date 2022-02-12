@@ -79,7 +79,8 @@ GLTFExporter.prototype = {
 			embedImages: false,
 			maxTextureSize: Infinity,
 			animations: [],
-			includeCustomExtensions: false
+			includeCustomExtensions: false,
+			textureUrlWithoutDomainName: false,
 		};
 
 		options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -856,8 +857,11 @@ GLTFExporter.prototype = {
 				}
 
 			} else {
-
-				gltfImage.uri = image.src;
+				if (options.textureUrlWithoutDomainName) {
+					gltfImage.uri = image.src.replace(/^(http|https):\/\/[^/]+/, "");
+				} else {
+					gltfImage.uri = image.src;
+				}
 
 			}
 
