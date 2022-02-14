@@ -1,6 +1,6 @@
 {
   "name": "3dtiles-tool",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "高效易用的3DTiles工具库，各种功能持续更新中",
   "main": "dist/bundle.js",
   "scripts": {
