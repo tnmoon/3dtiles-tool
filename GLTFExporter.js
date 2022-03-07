@@ -81,6 +81,7 @@ GLTFExporter.prototype = {
 			animations: [],
 			includeCustomExtensions: false,
 			textureUrlWithoutDomainName: false,
+			customizeTextureUrlMap: null,
 		};
 
 		options = Object.assign({}, DEFAULT_OPTIONS, options);
@@ -857,12 +858,13 @@ GLTFExporter.prototype = {
 				}
 
 			} else {
-				if (options.textureUrlWithoutDomainName) {
+				if (options.customizeTextureUrlMap instanceof Map && options.customizeTextureUrlMap.has(image.src)) {
+					gltfImage.uri = options.customizeTextureUrlMap.get(image.src)
+				} else if (options.textureUrlWithoutDomainName) {
 					gltfImage.uri = image.src.replace(/^(http|https):\/\/[^/]+/, "");
 				} else {
 					gltfImage.uri = image.src;
 				}
-
 			}
 
 			outputJSON.images.push(gltfImage);
